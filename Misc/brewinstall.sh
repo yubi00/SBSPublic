@@ -6,6 +6,6 @@ brew install mongodb mysql nettle node npm nvm openssl perl postgresql python re
 brew install apache-drill gcc docker maven
 brew cask install adobe-reader iterm2 skype java
 brew cask install atom docker dropbox evernote google-chrome intellij-idea slack spectacle vagrant virtualbox
-brew cask install adobe-creative-cloud sketch visual-studio-code
+brew cask install adobe-creative-cloud sketch visual-studio-code balsamiq-mockups
 
 

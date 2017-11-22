@@ -17,10 +17,10 @@ Your program will attach to a nominated MySQL database and execute a query speci
 
 Write a test case that exercises the hashing, and which confirms that the validate function works correctly.  
 
-Upload the test results to a github repository.  We should be able to execute your code by using “git clone” and “mvn” commands.
+Upload the test results to a github repository.  We should be able to execute your code by using `git clone` and `mvn` or `gradle` commands.
 
 Notes:
 
-* Performance is a consideration in this test.  In particular, try to minimise network traffic in your implementation. 
+* Performance is a consideration in this test.  In particular, try to minimise network traffic in your implementation.
 * Only MySQL code need be provided, but the overall code should be as database-independent as possible.
 * It is OK if the hashing function requires an _exact_ match of SQL statements including whitespace.  However, two tables that contain the same data should not return the same hash.
