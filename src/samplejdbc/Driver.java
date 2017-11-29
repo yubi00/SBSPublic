@@ -74,8 +74,16 @@ public class Driver {
 			preparedstatement.setString(2, getHash(first_name.getBytes(),"SHA-256"));
 			preparedstatement.setString(3, getHash(last_name.getBytes(),"SHA-256"));
 
-			preparedstatement.executeUpdate();
-			
+			int i = preparedstatement.executeUpdate();
+			if(i>0)
+	        {
+	              System.out.println("success");
+	        }
+	              else
+	        {
+	             System.out.println("insert into the table failed");
+
+	        }
 			
 		}
 		}
