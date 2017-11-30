@@ -72,7 +72,61 @@ public class Driver {
 		
 	}
 
-	public  static void ValidateState() throws SQLException{
+	public  static void ValidateState(String sqlquery) throws SQLException{
+		try {
+			connect();
+			System.out.println(sqlquery);
+
+			statement = connection.createStatement();
+			Statement statement1 = connection2.createStatement();
+			ResultSet rs = statement.executeQuery(sqlquery);
+			ResultSet rs1 = statement1.executeQuery("select * from hashed_queries");
+			StringBuilder sb = new StringBuilder();
+			int actor_id;
+			while(rs.next()){
+				 actor_id = rs.getInt("actor_id");
+				String first_name = rs.getString("first_name");
+				String last_name = rs.getString("last_name");
+				sb.append(actor_id);
+				sb.append(" ");
+				sb.append(first_name);
+				sb.append(" ");
+				sb.append(last_name);
+				sb.append(" ");
+						
+				
+				}
+			String actorquery = sb.toString(); 
+			System.out.println(actorquery);
+			String hashedquery = getHash(actorquery.getBytes(), "SHA-256");
+			boolean flag = false; 
+			while(rs1.next()){
+				String queryname = rs1.getString("sqlquery");
+				String hashed_q = rs1.getString("hashed_queries");
+				
+				if(sqlquery.equalsIgnoreCase(queryname) && hashedquery.equals(hashed_q)){
+					System.out.println("Data has not changed and hashed query matched");
+					flag = true;
+					break; 
+				}
+				else
+				{
+					flag = false; 
+				}
+			}
+			if(flag == false){
+				System.out.println("Data has changed");
+			}
+			
+			
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		finally{
+			disconnect();
+		}
+		
 		
 	}
 
@@ -109,7 +163,7 @@ public class Driver {
 		
 		
 		preparedstatement.setString(1, hashed_actor_query);
-		preparedstatement.setString(2, actor_query);
+		preparedstatement.setString(2, actor_query.toLowerCase());
 		
 
 		int i = preparedstatement.executeUpdate();
@@ -150,6 +204,7 @@ public class Driver {
 			int choice; 
 			System.out.println("Enter the choice: ");
 			choice = sc.nextInt();
+			sc.nextLine();
 			
 			switch(choice){
 			case 1:
@@ -158,7 +213,10 @@ public class Driver {
 				break; 
 				
 			case 2: 
-				ValidateState();
+				System.out.println("Enter sql query: ");
+				String sqlquery = sc.nextLine().toLowerCase();
+				System.out.println(sqlquery);
+				ValidateState(sqlquery);
 				break;
 				
 			case 3:
