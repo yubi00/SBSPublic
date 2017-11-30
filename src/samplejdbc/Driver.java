@@ -46,7 +46,29 @@ public class Driver {
 		return hashValue; 
 	}
 	
-	public static void ListHashes() throws SQLException {
+	public static void ListHashes() throws SQLException, IOException {
+		try{
+			connect();
+			String query = "select * from hashed_queries";
+			statement = connection2.createStatement();
+			ResultSet rs = statement.executeQuery(query);
+			System.out.println("id\tSQL Query \t\t Hashed query");
+			while(rs.next()){
+				int id = rs.getInt("id");
+				String queryname = rs.getString("sqlquery");
+				String hashedquery = rs.getString("hashed_queries");
+				
+				System.out.print(id + "\t ");
+				System.out.print(queryname + " \t");
+				System.out.println(hashedquery);
+			}
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		finally {
+			disconnect();
+		}
 		
 	}
 
@@ -57,35 +79,52 @@ public class Driver {
 	public  static void ProofOfState() throws SQLException, IOException {
 		try {
 		connect();
-		
-		String insert_query = "insert into hashed_actor values(?, ?, ?)";
+		String insert_query = "insert into hashed_queries (hashed_queries,sqlquery) values(?, ?)";
 		statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
 		preparedstatement = connection2.prepareStatement(insert_query);
 		
 		String actor_query = "SELECT * FROM actor";
 		ResultSet rs = statement.executeQuery(actor_query);
-		
+		StringBuilder sb = new StringBuilder();
+		int actor_id;
 		while(rs.next()){
-			int actor_id = rs.getInt("actor_id");
+			 actor_id = rs.getInt("actor_id");
 			String first_name = rs.getString("first_name");
 			String last_name = rs.getString("last_name");
+			sb.append(actor_id);
+			sb.append(" ");
+			sb.append(first_name);
+			sb.append(" ");
+			sb.append(last_name);
+			sb.append(" ");
+					
 			
-			preparedstatement.setInt(1, actor_id);
-			preparedstatement.setString(2, getHash(first_name.getBytes(),"SHA-256"));
-			preparedstatement.setString(3, getHash(last_name.getBytes(),"SHA-256"));
+			}
+		String actorquery = sb.toString(); 
+		System.out.println(actorquery);
+		
+		//Generate Hash of the above data returned by the query 
+		String hashed_actor_query = getHash(actorquery.getBytes(),"SHA-256");
+		System.out.println(hashed_actor_query);
+		
+		
+		preparedstatement.setString(1, hashed_actor_query);
+		preparedstatement.setString(2, actor_query);
+		
 
-			int i = preparedstatement.executeUpdate();
-			if(i>0)
-	        {
-	              System.out.println("success");
-	        }
-	              else
-	        {
-	             System.out.println("insert into the table failed");
+		int i = preparedstatement.executeUpdate();
+		
+		if(i>0)
+        {
+              System.out.println("successful insert to table");
+        }
+              else
+        {
+             System.out.println("insert into the table failed");
 
-	        }
-			
-		}
+        }
+
+		
 		}
 		catch(SQLException e){
 			
@@ -114,6 +153,7 @@ public class Driver {
 			
 			switch(choice){
 			case 1:
+				
 				ProofOfState();
 				break; 
 				
@@ -139,7 +179,5 @@ public class Driver {
 		}
 
 	}
-
 	
-
 }
